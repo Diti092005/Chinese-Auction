@@ -1,0 +1,53 @@
+<div class="card-container fade-in">
+  <div class="card">
+    <h2 class="title">Sign Up</h2>
+
+    <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+
+      <!-- שדות הטופס -->
+      <div class="form-group" [ngClass]="{'invalid': isInvalid('fullName')}">
+        <label for="fullName">Full Name</label>
+        <input id="fullName" type="text" pInputText formControlName="fullName" />
+        <small *ngIf="isInvalid('fullName')" class="error-text">Full Name is required.</small>
+      </div>
+
+      <div class="form-group" [ngClass]="{'invalid': isInvalid('email')}">
+        <label for="email">Email</label>
+        <input id="email" type="email" pInputText formControlName="email" />
+        <small *ngIf="signUpForm.get('email')?.errors?.['required'] && signUpForm.get('email')?.touched" class="error-text">Email is required.</small>
+        <small *ngIf="signUpForm.get('email')?.errors?.['email'] && signUpForm.get('email')?.touched" class="error-text">Please enter a valid email address.</small>
+      </div>
+
+      <div class="form-group" [ngClass]="{'invalid': isInvalid('username')}">
+        <label for="username">Username</label>
+        <input id="username" type="text" pInputText formControlName="username" />
+        <small *ngIf="isInvalid('username')" class="error-text">Username is required.</small>
+      </div>
+
+      <div class="form-group" [ngClass]="{'invalid': isInvalid('password')}">
+        <label for="password">Password</label>
+        <input id="password" type="password" pInputText formControlName="password" />
+        <small *ngIf="isInvalid('password')" class="error-text">Password is required.</small>
+      </div>
+
+      <div class="form-group" [ngClass]="{'invalid': isInvalid('phone')}">
+        <label for="phone">Phone (optional)</label>
+        <input id="phone" type="tel" pInputText formControlName="phone" />
+      </div>
+
+      <br />
+
+      <!-- כפתור עם spinner בזמן שליחה -->
+      <button pButton type="submit" [disabled]="signUpForm.invalid || isSubmitting" class="submit-button">
+        <ng-container *ngIf="!isSubmitting">Sign Up</ng-container>
+        <ng-container *ngIf="isSubmitting">
+          <i class="pi pi-spin pi-spinner"></i> Sending...
+        </ng-container>
+      </button>
+    </form>
+
+    <div *ngIf="message" [ngClass]="{'error-message': isError, 'success-message': !isError}" class="status-message">
+      {{ message }}
+    </div>
+  </div>
+</div>

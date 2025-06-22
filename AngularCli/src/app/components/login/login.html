@@ -1,0 +1,40 @@
+<div class="card form-container animate-fade-in">
+  <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="form-columns">
+
+    <!-- Left side -->
+    <div class="form-column">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input pInputText id="username" type="text" formControlName="username" class="form-input" />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input pInputText id="password" type="password" formControlName="password" class="form-input" />
+      </div>
+
+      <button pButton type="submit" label="Login" [disabled]="loginForm.invalid || loading" class="login-button">
+        <ng-container *ngIf="loading">
+          <p-progressSpinner styleClass="inline-spinner"></p-progressSpinner>
+        </ng-container>
+      </button>
+    </div>
+
+    <!-- OR Divider -->
+    <div class="or-divider">
+      <p-divider layout="horizontal">
+        <div class="or-text">OR</div>
+      </p-divider>
+    </div>
+
+    <!-- Right side -->
+    <div class="form-column">
+      <button pButton type="button" label="Sign Up" [routerLink]="['/signup']" class="form-button-alt"></button>
+    </div>
+
+  </form>
+
+  <div *ngIf="message" [ngClass]="{'error-message': isError, 'success-message': !isError}" class="status-message">
+    {{ message }}
+  </div>
+</div>

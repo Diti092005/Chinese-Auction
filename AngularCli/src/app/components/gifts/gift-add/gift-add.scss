@@ -1,0 +1,190 @@
+.card-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f4f6f8;
+  padding: 20px;
+  font-family: Calibri, sans-serif;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  padding: 30px 24px;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: center;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  margin-bottom: 1rem;
+
+  label {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: #333;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-family: Calibri, sans-serif;
+    transition: border-color 0.3s, box-shadow 0.3s;
+
+    &:focus {
+      border-color: #005fcc;
+      outline: none;
+      box-shadow: 0 0 5px rgba(0, 95, 204, 0.4);
+    }
+  }
+
+  &.invalid input {
+    border-color: #e74c3c;
+    background-color: #fdecea;
+    animation: shake 0.3s;
+  }
+}
+
+button {
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.error-text {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+.success-message,
+.status-message {
+  margin-top: 1rem;
+  font-family: Calibri, sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 12px;
+  border-radius: 5px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.success-message {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #81c784;
+}
+
+.error-message {
+  background-color: #fdecea;
+  color: #c62828;
+  border: 1px solid #e57373;
+}
+
+.status-message {
+  &.error-message {
+    background-color: #f8d7da;
+    color: #842029;
+    border: 1px solid #f5c2c7;
+  }
+  &.success-message {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    border: 1px solid #badbcc;
+  }
+}
+
+.submit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.fade-in {
+  animation: fadeInAnimation 0.5s ease-in;
+}
+
+@keyframes fadeInAnimation {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+/* רספונסיביות — טאבלטים */
+@media (max-width: 768px) {
+  .card {
+    padding: 24px 20px;
+    max-width: 90%;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  button {
+    font-size: 15px;
+  }
+}
+
+/* רספונסיביות — מובייל */
+@media (max-width: 480px) {
+  .card {
+    padding: 20px 16px;
+    max-width: 100%;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  input {
+    font-size: 0.95rem;
+    padding: 0.5rem;
+  }
+
+  button {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .success-message, .status-message {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+}

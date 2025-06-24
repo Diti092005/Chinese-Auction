@@ -1,16 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using server.DAL.intefaces;
+using server.Dal.Interfaces;
 using server.Models;
 using System.Security.Claims;
 
-namespace server.DAL
+namespace server.Dal
 {
     public class UserDal : IUserDal
     {
-        private readonly AppDbContext _context;
+        private readonly ApplicationDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserDal(AppDbContext context, IHttpContextAccessor httpContextAccessor)
+        public UserDal(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             this._httpContextAccessor = httpContextAccessor;

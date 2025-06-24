@@ -1,6 +1,6 @@
 ﻿namespace server.Models.DTO
 {
-    public class CategoryDto
+    public class CategoryDTO
     {
         public string Name { get; set; }
     }

@@ -4,6 +4,8 @@ export interface Donor {
   id: number;
   name: string;
   email: string;
-  showMe?: boolean;
+  showMe: boolean;
   gifts: Gift[];
+  giftsCount?: number; // חדש ואופציונלי
+
 }

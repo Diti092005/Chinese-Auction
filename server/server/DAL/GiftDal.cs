@@ -1,51 +1,49 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using server.DAL.intefaces;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using server.Dal.Interfaces;
 using server.Models;
 using server.Models.DTO;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace server.DAL
+namespace server.Dal
 {
     public class GiftDal : IGiftDal
     {
-        private readonly AppDbContext _context;
+        private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
 
-        public GiftDal(AppDbContext context, IMapper mapper)
+        public GiftDal(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
-        public async Task<List<GiftDtoResult>> Get()
+        public async Task<List<Gift>> Get()
         {
             var gifts = await _context.Gifts
                 .Include(g => g.Category)
                 .Include(g => g.Donor)
                 .Include(g => g.Tickets.Where(t => t.Status != TicketStatus.Pending))
-                .ThenInclude(t => t.User)
                 .Include(g => g.Winner)
                 .ToListAsync();
 
             if (gifts == null || !gifts.Any())
                 throw new InvalidOperationException("No gifts found.");
 
-            return _mapper.Map<List<GiftDtoResult>>(gifts);
+            return _mapper.Map<List<Gift>>(gifts);
         }
-        public async Task<GiftDtoResult> Get(int id)
+        public async Task<Gift> Get(int id)
         {
             var gift = await _context.Gifts
                 .Include(g => g.Category)
                 .Include(g => g.Donor)
                 .Include(g => g.Tickets.Where(t => t.Status != TicketStatus.Pending))
-                .ThenInclude(t => t.User)
                 .Include(g => g.Winner)
                 .FirstOrDefaultAsync(g => g.Id == id);
 
             if (gift == null)
                 throw new KeyNotFoundException($"Gift with ID {id} not found.");
 
-            return _mapper.Map<GiftDtoResult>(gift);
+            return gift;
         }
         public async Task Add(Gift gift)
         {
@@ -70,7 +68,7 @@ namespace server.DAL
             await _context.Gifts.AddAsync(gift);
             await _context.SaveChangesAsync();
         }
-        public async Task Update(int id, GiftDto gift)
+        public async Task Update(int id, GiftDTO gift)
         {
             var existingGift = await _context.Gifts.FindAsync(id);
             if (existingGift == null) throw new KeyNotFoundException($"Gift with ID {id} not found.");
@@ -111,13 +109,12 @@ namespace server.DAL
             await _context.SaveChangesAsync();
             return true;
         }
-        public async Task<List<GiftDtoResult>> Search(string giftName = null, string donorName = null, int? buyerCount = null)
+        public async Task<List<Gift>> Search(string giftName = null, string donorName = null, int? buyerCount = null)
         {
             var query = _context.Gifts
                 .Include(g => g.Category)
                 .Include(g => g.Donor)
                 .Include(g => g.Tickets.Where(t => t.Status != TicketStatus.Pending))
-                .ThenInclude(t => t.User)
                 .Include(g => g.Winner)
                 .AsQueryable();
 
@@ -136,10 +133,9 @@ namespace server.DAL
                 query = query.Where(g => g.Tickets.Count == buyerCount);
             }
             var gifts = await query.ToListAsync();
-            var giftsDtos = _mapper.Map<List<GiftDtoResult>>(gifts);
-            return giftsDtos;
+            return gifts;
         }
-        public async Task<DonorDtoResult> GetDonor(int giftId)
+        public async Task<Donor> GetDonor(int giftId)
         {
             var gift = await _context.Gifts
                 .Include(g => g.Donor)
@@ -147,20 +143,18 @@ namespace server.DAL
             if (gift == null)
                 throw new KeyNotFoundException($"Gift with ID {giftId} not found.");
 
-            var donorDto = _mapper.Map<DonorDtoResult>(gift.Donor);
-            return donorDto;
+            return gift.Donor;
         }
         public async Task<bool> TitleExists(string title)
         {
             return await _context.Gifts.AnyAsync(g => g.GiftName == title);
         }
-        public async Task<List<GiftDtoResult>> SortByPrice()
+        public async Task<List<Gift>> SortByPrice()
         {
             var gifts = await _context.Gifts
                 .Include(g => g.Category)
                 .Include(g => g.Donor)
                 .Include(g => g.Tickets.Where(t => t.Status != TicketStatus.Pending))
-                .ThenInclude(t => t.User)
                 .Include(g => g.Winner)
                 .OrderBy(g => g.Price)
                 .ToListAsync();
@@ -168,22 +162,21 @@ namespace server.DAL
             if (gifts == null || !gifts.Any())
                 throw new InvalidOperationException("No gifts found to sort by price.");
 
-            return _mapper.Map<List<GiftDtoResult>>(gifts);
+            return gifts;
         }
-        public async Task<List<GiftDtoResult>> SortByCategory()
+        public async Task<List<Gift>> SortByCategory()
         {
             var gifts = await _context.Gifts
                 .Include(g => g.Category)
                 .Include(g => g.Donor)
                 .Include(g => g.Tickets.Where(t => t.Status != TicketStatus.Pending))
-                .ThenInclude(t => t.User)
                 .Include(g => g.Winner)
                 .OrderBy(g => g.Category.Name)
                 .ToListAsync();
 
             if (gifts == null || !gifts.Any())
                 throw new InvalidOperationException("No gifts found to sort by price.");
-            return _mapper.Map<List<GiftDtoResult>>(gifts);
+            return gifts;
         }
 
         public async Task UpdateWinnerId(int id, int winnerId)

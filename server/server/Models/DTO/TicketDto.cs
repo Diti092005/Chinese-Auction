@@ -1,7 +1,9 @@
 ﻿namespace server.Models.DTO
 {
-    public class TicketDto
+    public class TicketDTO
     {
         public int GiftId { get; set; }
+        public int UserId { get; set; }
+
     }
 }

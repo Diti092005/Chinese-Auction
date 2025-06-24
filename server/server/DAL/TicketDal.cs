@@ -1,27 +1,28 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using server.DAL.intefaces;
+using server.Dal.Interfaces;
 using server.Models;
 using server.Models.DTO;
+using server.Dal;
 using System.Security.Claims;
 
-namespace server.DAL
+namespace server.Dal
 {
     public class TicketDal: ITicketDal
     {
-        private readonly AppDbContext _dbContext;
+        private readonly ApplicationDbContext _dbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUserDal _userDal;
         private readonly IMapper _mapper;
 
-        public TicketDal(AppDbContext dbContext, IHttpContextAccessor httpContextAccessor, IUserDal userDal, IMapper mapper)
+        public TicketDal(ApplicationDbContext dbContext, IHttpContextAccessor httpContextAccessor, IUserDal userDal, IMapper mapper)
         {
             this._dbContext = dbContext;
             this._httpContextAccessor = httpContextAccessor;
             this._userDal = userDal;
             this._mapper = mapper;
         }
-        public async Task<List<TicketDtoResult>> Get()
+        public async Task<List<Ticket>> Get()
         {
             var tickets = await _dbContext.Tickets
                 .Where(t => t.Status != TicketStatus.Pending)
@@ -32,10 +33,9 @@ namespace server.DAL
             {
                 throw new InvalidOperationException("No tickets found.");
             }
-            var ticketDtos = _mapper.Map<List<TicketDtoResult>>(tickets);
-            return ticketDtos;
+            return tickets;
         }
-        public async Task<List<TicketDtoResult>> GetByUserPaid()
+        public async Task<List<Ticket>> GetByUserPaid()
         {
             var user = await _userDal.GetUserFromToken();
             var tickets = await _dbContext.Tickets
@@ -46,10 +46,10 @@ namespace server.DAL
             {
                 throw new InvalidOperationException("No tickets found for this user.");
             }
-            var ticketDtos = _mapper.Map<List<TicketDtoResult>>(tickets);
+            var ticketDtos = _mapper.Map<List<Ticket>>(tickets);
             return ticketDtos;
         }
-        public async Task<List<TicketDtoResult>> GetByUserPending()
+        public async Task<List<Ticket>> GetByUserPending()
         {
             var user = await _userDal.GetUserFromToken();
             var tickets = await _dbContext.Tickets
@@ -60,10 +60,9 @@ namespace server.DAL
             {
                 throw new InvalidOperationException("No tickets found for this user.");
             }
-            var ticketDtos = _mapper.Map<List<TicketDtoResult>>(tickets);
-            return ticketDtos;
+            return tickets;
         }
-        public async Task<TicketDtoResult> Get(int id)
+        public async Task<Ticket> Get(int id)
         {
             var user = await _userDal.GetUserFromToken();
 
@@ -76,8 +75,7 @@ namespace server.DAL
             {
                 throw new UnauthorizedAccessException("You are not authorized to view this ticket.");
             }
-            var ticketDto = _mapper.Map<TicketDtoResult>(ticket);
-            return ticketDto;
+            return ticket;
         }
         public async Task Add(Ticket ticket)
         {
@@ -158,20 +156,6 @@ namespace server.DAL
             }
             _dbContext.Tickets.Remove(ticket);
             await _dbContext.SaveChangesAsync();
-        }
-
-        public async Task<List<TicketDtoResult>> GetByGiftId(int giftId)
-        {
-            var tickets = await _dbContext.Tickets
-                .Where(t => t.GiftId == giftId && t.Status != TicketStatus.Pending)
-                .Include(t => t.Gift)
-                .ToListAsync();
-            if (tickets == null)
-            {
-                throw new InvalidOperationException("No tickets found for this giftId.");
-            }
-            var ticketDtos = _mapper.Map<List<TicketDtoResult>>(tickets);
-            return ticketDtos;
         }
     }
 }

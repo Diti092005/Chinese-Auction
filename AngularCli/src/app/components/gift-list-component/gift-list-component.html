@@ -1,0 +1,17 @@
+<div class="gift-list">
+  <div *ngFor="let gift of gifts" class="gift-item">
+    <h3>{{ gift.name }}</h3>
+    <p>{{ gift.description }}</p>
+    <div>
+      <button (click)="decreaseQuantity(gift.id)">-</button>
+      <span>{{ getQuantity(gift.id) }}</span>
+      <button (click)="increaseQuantity(gift.id)">+</button>
+    </div>
+    <p>Already purchased: {{ getPaidCount(gift.id) }}</p>
+  </div>
+
+  <div class="cart-summary">
+    <h3>Total Amount: {{ getTotalAmount() }} ₪</h3>
+    <button (click)="pay()">Proceed to Payment</button>
+  </div>
+</div>

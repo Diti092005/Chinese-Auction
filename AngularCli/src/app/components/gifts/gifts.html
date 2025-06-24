@@ -1,0 +1,26 @@
+<div class="mb-3 text-right">
+  <button pButton label="Add Gift" icon="pi pi-plus" (click)="onAddGift()" class="p-button-success"></button>
+</div>
+
+<p-table [value]="gifts" [paginator]="true" [rows]="10" [responsiveLayout]="'scroll'">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Name</th>
+      <th>Category</th>
+      <th>Donor</th>
+      <th>Price</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-gift>
+    <tr>
+      <td>{{ gift.giftName }}</td>
+      <td>{{ gift.category?.name }}</td>
+      <td>{{ gift.donor?.name }}</td>
+      <td>{{ gift.price | currency:'ILS' }}</td>
+      <td>
+        <button pButton icon="pi pi-pencil" class="p-button-sm" (click)="onEditGift(gift.id)"></button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

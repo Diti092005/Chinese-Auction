@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using server.DAL.intefaces;
+using server.Dal.Interfaces;
 using server.Models;
 
-namespace server.DAL
+namespace server.Dal
 {
     public class CategoryDal : ICategoryDal
     {
-        private readonly AppDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public CategoryDal(AppDbContext context)
+        public CategoryDal(ApplicationDbContext context)
         {
             _context = context;
         }

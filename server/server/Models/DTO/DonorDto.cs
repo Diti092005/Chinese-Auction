@@ -1,6 +1,6 @@
 ﻿namespace server.Models.DTO
 {
-    public class DonorDto
+    public class DonorDTO
     {
         public string Name { get; set; }
         public string Email { get; set; }

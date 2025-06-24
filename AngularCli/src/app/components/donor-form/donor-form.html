@@ -1,0 +1,31 @@
+<p-dialog header="Form Donor" [(visible)]="visible" (onHide)="close()" [modal]="true"
+    [style]="{ width: '100%', maxWidth: '450px' }">
+    <form [formGroup]="donorForm" class="space-y-6 p-4">
+        <div>
+            <label class="block font-semibold mb-1" for="nameInput">Name: </label>
+            <input id="nameInput" pInputText type="text" formControlName="name" class="w-full" />
+            <small *ngIf="name?.invalid && name?.touched" class="text-red-600 block mt-1">
+                Name is required
+            </small>
+        </div>
+        <br>
+        <div>
+            <label class="block font-semibold mb-1" for="emailInput">Email: </label>
+            <input id="emailInput" pInputText type="email" formControlName="email" class="w-full" />
+            <small *ngIf="email?.invalid && email?.touched" class="text-red-600 block mt-1">
+                Valid email is required
+            </small>
+        </div>
+        <br>
+        <div class="flex items-center gap-2">
+            <p-checkbox inputId="showMe" formControlName="showMe" binary="true"></p-checkbox>
+            <label for="showMe"> Allow to show me</label>
+        </div>
+        <br>
+        <div class="flex justify-end gap-4 pt-6">
+            <button pButton type="button" label="Cancel" class="p-button-secondary" (click)="close()"></button>
+            <span> | </span>
+            <button pButton type="button" label="Submit" class="p-button-success" (click)="submit()"></button>
+        </div>
+    </form>
+</p-dialog>

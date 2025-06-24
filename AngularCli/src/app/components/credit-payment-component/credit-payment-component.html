@@ -1,0 +1,84 @@
+<div class="container">
+    <div class="form-section">
+        <p-card header="Credit Card Payment" styleClass="max-w-md mx-auto mt-5">
+            <form [formGroup]="paymentForm" (ngSubmit)="submit()">
+                <br>
+                <div class="mb-3">
+                    <label>Card Number: </label>
+                    <p-inputMask formControlName="cardNumber" mask="9999 9999 9999 9999"
+                        placeholder="____ ____ ____ ____" class="w-full" (focus)="onFocus('cardNumber')"
+                        (blur)="onBlur()"></p-inputMask>
+                </div>
+                <br>
+                <div class="mb-3">
+                    <label>Cardholder Name: </label>
+                    <input pInputText formControlName="cardHolder" placeholder="Full Name" class="w-full"
+                        (focus)="onFocus('cardHolder')" (blur)="onBlur()" />
+                </div>
+                <br>
+                <div class="flex gap-3 mb-3">
+                    <div class="flex-1">
+                        <label>Expiry: </label>
+                        <p-inputMask formControlName="expiry" mask="99/99" placeholder="MM/YY" class="w-full"
+                            (focus)="onFocus('expiry')" (blur)="onBlur()"></p-inputMask>
+                    </div>
+                    <br>
+                    <div class="flex-1">
+                        <label>CVV: </label>
+                        <p-inputMask formControlName="cvv" mask="999" placeholder="___" class="w-full"
+                            (focus)="onFocus('cvv')" (blur)="onBlur()"></p-inputMask>
+                    </div>
+                </div>
+                <br>
+                <button pButton type="submit" class="w-full flex items-center justify-center gap-2"
+                    [disabled]="paymentForm.invalid || isProcessing">
+                    <ng-container *ngIf="!isProcessing; else loading">
+                        <i class="pi pi-credit-card"></i>
+                        Submit Payment
+                    </ng-container>
+                    <ng-template #loading>
+                        <p-progressSpinner styleClass="w-5 h-5" strokeWidth="4"
+                            animationDuration=".5s"></p-progressSpinner>
+                        Processing...
+                    </ng-template>
+                </button>
+                <br>
+                <br>
+                <div *ngIf="successMessage" class="message mt-3">
+                    {{ successMessage }}
+                </div>
+            </form>
+        </p-card>
+    </div>
+
+    <div class="card-visual">
+        <div class="credit-card" [class.flipped]="focusedField === 'cvv'" tabindex="0" aria-label="Credit card preview">
+            <div class="card-front">
+                <div class="chip"></div>
+                <div class="card-number">
+                    {{ paymentForm.get('cardNumber')?.value || '#### #### #### ####' }}
+                </div>
+                <div class="card-holder-label">Cardholder</div>
+                <div class="card-holder-name">
+                    {{ paymentForm.get('cardHolder')?.value?.toUpperCase() || 'FULL NAME' }}
+                </div>
+                <div class="expiry-label">Expiry</div>
+                <div class="expiry-date">
+                    {{ paymentForm.get('expiry')?.value || 'MM/YY' }}
+                </div>
+                <div class="card-logo">VISA</div>
+            </div>
+
+            <div class="card-back">
+                <div class="magnetic-strip"></div>
+                <div class="signature-box">
+                    <div class="cvv-label">CVV</div>
+                    <div class="cvv-value">
+                        {{ paymentForm.get('cvv')?.value || '***' }}
+                    </div>
+                </div>
+                <div class="card-logo-back">VISA</div>
+            </div>
+        </div>
+    </div>
+</div>

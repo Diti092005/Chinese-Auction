@@ -1,0 +1,55 @@
+<div class="card-container fade-in">
+  <div class="card">
+    <h2 class="title">Add Gift</h2>
+
+    <form [formGroup]="giftForm" (ngSubmit)="onSubmit()" class="p-fluid">
+
+      <div class="form-group" [ngClass]="{'invalid': isInvalid('giftName')}">
+        <label for="giftName">Gift Name</label>
+        <input id="giftName" pInputText formControlName="giftName" />
+        <small *ngIf="isInvalid('giftName')" class="error-text">Gift Name is required.</small>
+      </div>
+
+      <div class="form-group" [ngClass]="{'invalid': isInvalid('categoryId')}">
+        <label for="categoryId">Category</label>
+  <p-dropdown id="categoryId" [options]="categoryOptions" optionLabel="label" formControlName="categoryId" placeholder="Select a category"></p-dropdown>
+        <small *ngIf="isInvalid('categoryId')" class="error-text">Category is required.</small>
+      </div>
+
+      <div class="form-group" [ngClass]="{'invalid': isInvalid('donorId')}">
+        <label for="donorId">Donor</label>
+      <p-dropdown id="donorId" [options]="donorOptions" optionLabel="label" formControlName="donorId" placeholder="Select a donor"></p-dropdown>
+        <small *ngIf="isInvalid('donorId')" class="error-text">Donor is required.</small>
+      </div>
+
+      <div class="form-group" [ngClass]="{'invalid': isInvalid('price')}">
+        <label for="price">Price</label>
+        <input id="price" pInputText type="number" formControlName="price" />
+        <small *ngIf="isInvalid('price')" class="error-text">Price is required.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="details">Details</label>
+        <textarea id="details" pInputText formControlName="details" rows="4"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="imageUrl">Image URL</label>
+        <input id="imageUrl" pInputText formControlName="imageUrl" />
+      </div>
+
+      <br />
+
+      <button pButton type="submit" [disabled]="giftForm.invalid || isSubmitting" class="submit-button">
+        <ng-container *ngIf="!isSubmitting">Save Gift</ng-container>
+        <ng-container *ngIf="isSubmitting">
+          <i class="pi pi-spin pi-spinner"></i> Saving...
+        </ng-container>
+      </button>
+    </form>
+
+    <div *ngIf="message" [ngClass]="{'error-message': isError, 'success-message': !isError}" class="status-message">
+      {{ message }}
+    </div>
+  </div>
+</div>

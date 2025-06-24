@@ -1,17 +1,18 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using server.DAL.intefaces;
+using server.Dal.Interfaces;
 using server.Models;
 using server.Models.DTO;
-
-namespace server.DAL
+using server.Dal;
+using System.Security.Claims;
+namespace server.Dal
 {
     public class DonorDal : IDonorDal
     {
-        private readonly AppDbContext _context;
+        private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
 
-        public DonorDal(AppDbContext context, IMapper mapper)
+        public DonorDal(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
@@ -35,7 +36,7 @@ namespace server.DAL
 
         }
 
-        public async Task<List<DonorDtoResult>> Get()
+        public async Task<List<Donor>> Get()
         {
             var donors = await _context.Donors
                 .Include(d => d.Gifts)
@@ -45,11 +46,10 @@ namespace server.DAL
                 throw new InvalidOperationException("No donors found.");
             }
 
-            var donorDtos = _mapper.Map<List<DonorDtoResult>>(donors);
-            return donorDtos;
+            return donors;
         }
 
-        public async Task<DonorDtoResult> Get(int id)
+        public async Task<Donor> Get(int id)
         {
             var donor = await _context.Donors
                 .Include(d => d.Gifts)
@@ -60,11 +60,10 @@ namespace server.DAL
                 throw new KeyNotFoundException($"Donor with ID {id} not found.");
             }
 
-            var donorDto = _mapper.Map<DonorDtoResult>(donor);
-            return donorDto;
+            return donor;
         }
 
-        public async Task Update(int id, DonorDto donorDto)
+        public async Task Update(int id, DonorDTO donorDto)
         {
             var existingDonor = await _context.Donors.FindAsync(id);
             if (existingDonor == null)
@@ -82,7 +81,7 @@ namespace server.DAL
             }
         }
 
-        public async Task<List<DonorDtoResult>> Search(string name = null, string email = null, string giftName = null)
+        public async Task<List<Donor>> Search(string name = null, string email = null, string giftName = null)
         {
             var query = _context.Donors
                 .Include(d => d.Gifts)
@@ -105,10 +104,24 @@ namespace server.DAL
             var donors = await query.ToListAsync();
             if (donors == null || !donors.Any())
             {
-                throw new InvalidOperationException("No donors match the search criteria.");
+                return [];
+                //throw new InvalidOperationException("No donors match the search criteria.");
             }
-            var donorDtos = _mapper.Map<List<DonorDtoResult>>(donors);
-            return donorDtos;
+            
+            return donors;
+        }
+        public async Task<int> CountOfGifts(int donorId)
+        {
+            var donor = await _context.Donors
+                .Include(d => d.Gifts)
+                .FirstOrDefaultAsync(d => d.Id == donorId);
+
+            if (donor == null)
+            {
+                throw new KeyNotFoundException($"Donor with ID {donorId} not found.");
+            }
+
+            return donor.Gifts?.Count ?? 0;
         }
     }
 }

@@ -1,0 +1,13 @@
+<p-menubar [model]="items" styleClass="surface-ground shadow-2 mb-3"></p-menubar>
+
+<p-card styleClass="m-4">
+  <ng-template pTemplate="content">
+    <router-outlet></router-outlet>
+  </ng-template>
+</p-card>
+
+<p-panel header="© 2025 - אפליקציה עם PrimeNG"
+         styleClass="surface-200 text-center text-primary font-bold mt-5 border-round shadow-1"
+         [toggleable]="false">
+</p-panel>
+

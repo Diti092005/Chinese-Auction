@@ -1,6 +1,6 @@
-﻿namespace server.Models.DTO
+namespace server.Models.DTO
 {
-    public class RegisterDto
+    public class RegisterDTO
     {
         public string Fullname { get; set; }
         public string Username { get; set; }

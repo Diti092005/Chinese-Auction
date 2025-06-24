@@ -1,0 +1,146 @@
+.container {
+  display: flex;
+  gap: 2rem;
+  max-width: 900px;
+  margin: 2rem auto;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.form-section {
+  flex: 1 1 350px;
+}
+
+.card-visual {
+  flex: 1 1 350px;
+  perspective: 1000px;
+}
+
+.credit-card {
+  width: 350px;
+  height: 200px;
+  border-radius: 15px;
+  color: white;
+  font-family: 'Courier New', Courier, monospace;
+  position: relative;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+  cursor: default;
+  user-select: none;
+}
+
+.credit-card.flipped {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+  backface-visibility: hidden;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.card-front {
+  background: linear-gradient(135deg, #4b79a1, #283e51);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.chip {
+  width: 50px;
+  height: 40px;
+  background: linear-gradient(135deg, #d4af37, #b8860b);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.6);
+}
+
+.card-number {
+  font-size: 1.3rem;
+  letter-spacing: 3px;
+  margin-bottom: 1rem;
+}
+
+.card-holder-label,
+.expiry-label {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.card-holder-name,
+.expiry-date {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.card-holder-name {
+  margin-bottom: 1rem;
+}
+
+.card-logo {
+  font-weight: 900;
+  font-size: 1.5rem;
+  align-self: flex-end;
+  opacity: 0.8;
+}
+
+.card-back {
+  background: linear-gradient(135deg, #283e51, #4b79a1);
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+}
+
+.magnetic-strip {
+  background: black;
+  height: 40px;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+}
+
+.signature-box {
+  background: white;
+  height: 50px;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  color: black;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+.cvv-label {
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+
+.cvv-value {
+  letter-spacing: 4px;
+  font-size: 1.2rem;
+}
+
+.card-logo-back {
+  margin-top: auto;
+  font-weight: 900;
+  font-size: 1.5rem;
+  align-self: flex-end;
+  opacity: 0.8;
+}
+
+.message {
+  padding: 0.75rem 1rem;
+  background-color: #e0f7fa;
+  color: #006064;
+  border: 1px solid #4dd0e1;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+}

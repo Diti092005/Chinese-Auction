@@ -1,20 +1,19 @@
 import { Component } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { InputTextModule } from 'primeng/inputtext';
-import { User } from '../../services/user';
-import { RouterModule } from '@angular/router';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CommonModule } from '@angular/common';
+import { RouterModule, Router } from '@angular/router';
+import { User } from '../../services/user';
+
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
     RouterModule,
-    HttpClientModule,
     ReactiveFormsModule,
     DividerModule,
     ButtonModule,
@@ -31,7 +30,7 @@ export class LoginComponent {
   isError: boolean = false;
   loading: boolean = false;
 
-  constructor(private fb: FormBuilder, private user: User) {
+  constructor(private fb: FormBuilder, private user: User,private router: Router) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -66,5 +65,7 @@ export class LoginComponent {
         this.loading = false;
       }
     });
+
+    this.router.navigate(['/home'])
   }
 }

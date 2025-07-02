@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DonorFormComponent } from './donor-form';
+import { LogoutComponent } from './logout.component';
 
-describe('DonorForm', () => {
-  let component: DonorFormComponent;
-  let fixture: ComponentFixture<DonorFormComponent>;
+describe('LogoutComponent', () => {
+  let component: LogoutComponent;
+  let fixture: ComponentFixture<LogoutComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DonorFormComponent]
+      imports: [LogoutComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DonorFormComponent);
+    fixture = TestBed.createComponent(LogoutComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

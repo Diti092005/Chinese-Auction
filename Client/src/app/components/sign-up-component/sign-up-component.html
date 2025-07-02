@@ -38,12 +38,15 @@
       <br />
 
       <!-- כפתור עם spinner בזמן שליחה -->
-      <button pButton type="submit" [disabled]="signUpForm.invalid || isSubmitting" class="submit-button">
-        <ng-container *ngIf="!isSubmitting">Sign Up</ng-container>
-        <ng-container *ngIf="isSubmitting">
-          <i class="pi pi-spin pi-spinner"></i> Sending...
-        </ng-container>
-      </button>
+      <div class="signup-btns-row">
+        <button pButton type="submit" [disabled]="signUpForm.invalid || isSubmitting" class="submit-button">
+          <ng-container *ngIf="!isSubmitting">Sign Up</ng-container>
+          <ng-container *ngIf="isSubmitting">
+            <i class="pi pi-spin pi-spinner"></i> Sending...
+          </ng-container>
+        </button>
+        <button pButton type="button" class="p-button-secondary cancel-button" (click)="onCancel()">Cancel</button>
+      </div>
     </form>
 
     <div *ngIf="message" [ngClass]="{'error-message': isError, 'success-message': !isError}" class="status-message">

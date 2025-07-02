@@ -14,6 +14,7 @@ import { CardModule } from 'primeng/card';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { TicketService } from '../../services/ticket.service';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-gifts',
@@ -27,7 +28,8 @@ import { TicketService } from '../../services/ticket.service';
     DialogModule,
     FormsModule,
     CardModule,
-    ToastModule
+    ToastModule,
+    TooltipModule
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: 'gifts-manager.html',

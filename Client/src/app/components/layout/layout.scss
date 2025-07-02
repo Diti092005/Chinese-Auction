@@ -1,19 +1,22 @@
-.avatar-wrapper {
-  position: absolute;
-  top: 0.5rem;
-  right: 1rem;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-}
+// .avatar-wrapper {
+//   z-index: 1000;
+//   display: flex;
+//   align-items: center;
+// }
 
-.overlay-content {
-  padding: 0.5rem;
-  min-width: 150px;
-}
+// .overlay-content {
+//   padding: 0.5rem;
+//   min-width: 150px;
+// }
 
-.user-name {
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  text-align: center;
+// .user-name {
+//   font-weight: bold;
+//   margin-bottom: 0.5rem;
+//   text-align: center;
+// }
+
+// (ה-footer וה-footer-content הוסרו. אין עיצוב תחתית דף.)
+
+.full-width {
+  width: 100%;
 }

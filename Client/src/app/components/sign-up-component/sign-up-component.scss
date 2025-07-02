@@ -127,6 +127,26 @@ button {
   animation: fadeInAnimation 0.5s ease-in;
 }
 
+.signup-btns-row {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.cancel-button {
+  background: #f4f6f8 !important;
+  color: #333 !important;
+  border: 1px solid #bfc6d1 !important;
+  transition: background 0.2s, color 0.2s;
+}
+
+.cancel-button:hover {
+  background: #e0e6f6 !important;
+  color: #007ad9 !important;
+  border-color: #007ad9 !important;
+}
+
 @keyframes fadeInAnimation {
   from {
     opacity: 0;

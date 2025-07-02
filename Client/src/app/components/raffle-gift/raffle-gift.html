@@ -1,14 +1,71 @@
+<style>
+.raffle-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 600px) {
+  .raffle-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 900px) {
+  .raffle-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (min-width: 1300px) {
+  .raffle-list {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+.raffle-container {
+  width: 100%;
+}
+.raffle-list > div {
+  display: flex;
+  height: 100%;
+}
+p-card {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+}
+.card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0.5rem;
+  gap: 0.5rem;
+}
+.card-content p {
+  margin: 0.2em 0;
+  text-align: center;
+}
+.card-content button {
+  margin: 0.5em 0;
+}
+</style>
+
 <p-toast></p-toast>
 
 <div class="raffle-container">
-  <div *ngFor="let gift of gifts">
-    <p-card [header]="gift.giftName">
-      <ng-template pTemplate="content">
-        <p *ngIf="gift.details">{{ gift.details }}</p>
-        <p *ngIf="gift.price">Price: {{ gift.price }} ₪</p>
-        <button pButton label="Raffle" (click)="raffle(gift.id)"></button>
-        <p *ngIf="raffleResults[gift.id]">Result: {{ raffleResults[gift.id] }}</p>
-      </ng-template>
-    </p-card>
+  <h2 class="raffle-title" style="text-align:left; font-size:2rem; font-weight:700; margin-bottom:1.5rem; margin-top:0.5rem; letter-spacing:0.02em; color:#2a3556;">Raffle Gifts</h2>
+  <div class="raffle-list">
+    <div *ngFor="let gift of gifts">
+      <p-card [header]="gift.giftName">
+        <ng-template pTemplate="content">
+          <div class="card-content">
+            <p *ngIf="gift.details; else emptyDetails">{{ gift.details }}</p>
+            <ng-template #emptyDetails><p style="visibility:hidden">.</p></ng-template>
+            <p *ngIf="gift.price">Price: {{ gift.price }} ₪</p>
+            <button pButton label="Raffle" (click)="raffle(gift.id)"></button>
+            <p *ngIf="raffleResults[gift.id]">Result: {{ raffleResults[gift.id] }}</p>
+          </div>
+        </ng-template>
+      </p-card>
+    </div>
   </div>
 </div>

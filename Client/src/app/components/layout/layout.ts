@@ -64,6 +64,7 @@ export class Layout implements OnInit {
         // { label: 'My Tickets', routerLink: '/usertickets', styleClass: currentUrl.includes('/usertickets') ? 'active-tab' : '' },
         { label: 'Raffle', routerLink: '/raffle', styleClass: currentUrl.includes('/raffle') ? 'active-tab' : '' },
         { label: 'Summary', routerLink: '/summary', styleClass: currentUrl.includes('/summary') ? 'active-tab' : '' },
+        { label: 'LogOut', routerLink: '/logout', styleClass: currentUrl.includes('/logout') ? 'active-tab' : '' },
 
       ];
     } else if (this.userRole === 'User') {
@@ -72,6 +73,7 @@ export class Layout implements OnInit {
         { label: 'Purchase Tickets', icon: 'pi pi-credit-card', routerLink: '/purchase', styleClass: currentUrl.includes('/purchase') ? 'active-tab' : '' },
         { label: 'List Gifts', routerLink: '/giftslist', styleClass: currentUrl.includes('/giftslist') ? 'active-tab' : '' },
         { label: 'My Tickets', routerLink: '/usertickets', styleClass: currentUrl.includes('/usertickets') ? 'active-tab' : '' },
+        { label: 'LogOut', routerLink: '/logout', styleClass: currentUrl.includes('/logout') ? 'active-tab' : '' },
 
       ];
     }

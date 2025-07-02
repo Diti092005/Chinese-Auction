@@ -1,36 +1,39 @@
-<!-- תפריט עליון -->
-<p-menubar [model]="items" class="custom-menubar"></p-menubar>
-
-<!-- Avatar עם Popover -->
-<div class="avatar-wrapper">
-  <p-popover>
-    <ng-template pTemplate="trigger">
-      <p-avatar
-        [label]="initials"
-        shape="circle"
-        [style]="{
-          'background-color': '#007ad9',
-          'color': 'white',
-          'width': '40px',
-          'height': '40px',
-          'font-size': '1rem'
-        }">
-      </p-avatar>
-    </ng-template>
-
-    <ng-template pTemplate="content">
-      <div class="overlay-content">
-        <div class="user-name">{{ fullName }}</div>
-        <button
-          pButton
-          label="Logout"
-          icon="pi pi-sign-out"
-          class="p-button-sm p-button-danger w-full mt-2"
-          (click)="logout()">
-        </button>
-      </div>
-    </ng-template>
-  </p-popover>
+<!-- תפריט עליון + Avatar בשורה אחת -->
+<div class="header-bar" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: 100%;">
+  <div style="flex: 1 1 0; min-width: 0;">
+    <p-menubar [model]="items" class="custom-menubar full-width"></p-menubar>
+  </div>
+  <div class="avatar-wrapper">
+    <p-popover>
+      <ng-template pTemplate="trigger">
+        <p-avatar
+          [label]="initials"
+          shape="circle"
+          [style]="{
+            'background-color': '#007ad9',
+            'color': 'white',
+            'width': '40px',
+            'height': '40px',
+            'font-size': '1rem'
+          }">
+        </p-avatar>
+      </ng-template>
+      <ng-template pTemplate="content">
+        <div class="overlay-content">
+          <div class="user-name">{{ fullName }}</div>
+          <div class="logout-btn-wrapper">
+            <button
+              pButton
+              label="Logout"
+              icon="pi pi-sign-out"
+              class="p-button-sm p-button-danger w-full mt-2"
+              (click)="logout()">
+            </button>
+          </div>
+        </div>
+      </ng-template>
+    </p-popover>
+  </div>
 </div>
 
 <!-- תוכן הדף -->
@@ -40,8 +43,53 @@
 
 <!-- תחתית -->
 <footer class="footer">
-  <div class="footer-content">
-    <p>&copy; Your Company Name. All rights reserved.</p>
-    <p>Powered by Angular and PrimeNG</p>
-  </div>
+  <p>&copy; Matshel. All rights reserved.</p>
+  <p>Powered by Angular and PrimeNG</p>
 </footer>
+
+<style>
+  .full-width {
+    width: 100%;
+  }
+  .footer {
+    background: linear-gradient(90deg, #3a4660 0%, #5c6e91 100%);
+    color: #f8fafd;
+    padding: 1.2rem 0 0.7rem 0;
+    text-align: center;
+    font-size: 1rem;
+    margin-top: 2rem;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
+    width: 100vw;
+    z-index: 10;
+    position: static;
+    border-top: 2px solid #e0e6f6;
+    letter-spacing: 0.03em;
+  }
+  html, body {
+    height: 100%;
+    min-height: 100%;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+  }
+  app-root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    flex: 1 0 auto;
+  }
+  .main-content {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 60vh;
+    padding-bottom: 0;
+  }
+  .footer {
+    flex-shrink: 0;
+    margin-top: auto;
+  }
+</style>

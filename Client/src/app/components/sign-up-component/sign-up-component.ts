@@ -70,4 +70,8 @@ onSubmit() {
     const control = this.signUpForm.get(controlName);
     return !!(control && control.invalid && (control.dirty || control.touched));
   }
+
+  onCancel() {
+    this.router.navigate(['/login']);
+  }
 }

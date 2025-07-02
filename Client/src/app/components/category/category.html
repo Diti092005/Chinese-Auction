@@ -1,3 +1,4 @@
+<h2 class="section-title">Categories</h2>
 <div class="add-category">
   <input
     pInputText
@@ -9,11 +10,14 @@
   <button
     pButton
     type="button"
-    label="Add Category"
-    (click)="addCategory()"
     [disabled]="loading"
+    (click)="addCategory()"
+    class="add-category-btn"
   >
-    <i *ngIf="loading" class="pi pi-spin pi-spinner" style="margin-left: 0.5rem;"></i>
+    <ng-container *ngIf="!loading">Add Category</ng-container>
+    <ng-container *ngIf="loading">
+      <i class="pi pi-spin pi-spinner" style="margin-left: 0.5rem;"></i> Adding...
+    </ng-container>
   </button>
 </div>
 

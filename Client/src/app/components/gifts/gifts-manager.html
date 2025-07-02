@@ -46,9 +46,11 @@
         </td>
         <td>
           <div class="actions">
-            <button pButton label="Edit" class="p-button-sm p-button-warning" (click)="onEditGift(gift)">
+            <button pButton label="Edit" class="p-button-sm p-button-warning" (click)="onEditGift(gift)"
+              pTooltip="update gift" tooltipPosition="top">
             </button>
-            <button pButton label="Delete" class="p-button-sm p-button-danger" (click)="onDeleteGift(gift.id)">
+            <button pButton label="Delete" class="p-button-sm p-button-danger" (click)="onDeleteGift(gift.id)"
+              pTooltip="Delete gift" tooltipPosition="top">
             </button>
           </div>
         </td>

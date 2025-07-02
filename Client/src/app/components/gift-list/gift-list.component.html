@@ -1,5 +1,5 @@
-<div class="sort-controls" style="margin-bottom: 1rem; display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
-  <div>
+<div class="sort-controls" style="margin-bottom: 1rem; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+  <div style="display: flex; gap: 0.5rem; align-items: center;">
     <label style="margin-inline-end: 0.5rem;">Primary sort:</label>
     <button pButton type="button" (click)="onSortChange('price', true)" [class]="primarySortField === 'price' ? 'p-button-info' : 'p-button-secondary'">
       Price
@@ -10,7 +10,7 @@
       <span *ngIf="primarySortField === 'category'">{{ primarySortDirection === 'asc' ? '▲' : '▼' }}</span>
     </button>
   </div>
-  <div>
+  <div style="display: flex; gap: 0.5rem; align-items: center;">
     <label style="margin-inline-end: 0.5rem;">Secondary sort:</label>
     <button pButton type="button" (click)="onSortChange('price', false)" [class]="secondarySortField === 'price' ? 'p-button-info' : 'p-button-secondary'">
       Price

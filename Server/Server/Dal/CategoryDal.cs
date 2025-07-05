@@ -33,6 +33,13 @@ namespace Server.Dal
                 _logger.LogWarning($"Category with ID {id} not found");
                 throw new KeyNotFoundException($"Category with ID {id} not found.");
             }
+            // בדיקה אם יש מתנות לקטגוריה
+            bool hasGifts = await _context.Gifts.AnyAsync(g => g.CategoryId == id);
+            if (hasGifts)
+            {
+                _logger.LogWarning($"Cannot delete category {id} because there are gifts assigned to it");
+                throw new InvalidOperationException($"Cannot delete category {id} because there are gifts assigned to it");
+            }
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
             _logger.LogInformation($"Category with id {id} deleted successfully");

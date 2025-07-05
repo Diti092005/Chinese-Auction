@@ -11,7 +11,7 @@ namespace Server.Dal.Interfaces
 
         Task<Ticket> Get(int id);
         Task Add(Ticket ticket);
-        Task pay(int id);
+        Task pay(int [] ids);
         Task Win(int id);
         Task Delete(int id);
 

@@ -13,6 +13,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TooltipModule } from 'primeng/tooltip';
+import { DonorDto } from '../../models/donor.dto';
 
 @Component({
   selector: 'app-donor',
@@ -53,7 +54,7 @@ export class DonorComponent implements OnInit {
   }
 
   loadDonors() {
-    this.donorService.getAllDonors().subscribe({
+    this.donorService.getAll().subscribe({
       next: (data) => {
         this.donors = data.map((donor) => ({
           ...donor,
@@ -86,7 +87,7 @@ export class DonorComponent implements OnInit {
       header: 'Confirm Deletion',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.donorService.deleteDonor(donorId).subscribe({
+        this.donorService.delete(donorId).subscribe({
           next: () => {
             this.donors = this.donors.filter((d) => d.id !== donorId);
             this.messageService.add({
@@ -95,11 +96,17 @@ export class DonorComponent implements OnInit {
               detail: 'Donor deleted successfully',
             });
           },
-          error: () => {
+          error: (err) => {
+            let detail = 'Failed to delete donor';
+            if (err && err.error && typeof err.error === 'string' && err.error.includes('Cannot delete donor because he has gifts')) {
+              detail = 'Cannot delete donor because he has gifts. Please remove all gifts before deleting the donor.';
+            } else if (err && err.error && err.error.message && typeof err.error.message === 'string' && err.error.message.includes('Cannot delete donor because he has gifts')) {
+              detail = 'Cannot delete donor because he has gifts. Please remove all gifts before deleting the donor.';
+            }
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Failed to delete donor',
+              detail,
             });
           },
         });
@@ -109,7 +116,7 @@ export class DonorComponent implements OnInit {
 
   search() {
     this.donorService
-      .searchDonors(this.searchName, this.searchEmail, this.searchGift)
+      .search(this.searchName, this.searchEmail, this.searchGift)
       .subscribe({
         next: (data) => (this.donors = data),
         error: (err) => {
@@ -128,7 +135,12 @@ export class DonorComponent implements OnInit {
 
   onSaveDonor(donor: Donor) {
     if (donor.id) {
-      this.donorService.updateDonor(donor).subscribe({
+      const dto: DonorDto = {
+        name: donor.name,
+        email: donor.email,
+        showMe: donor.showMe ?? false
+      };
+      this.donorService.update(donor.id, dto).subscribe({
         next: () => {
           const index = this.donors.findIndex((d) => d.id === donor.id);
           if (index !== -1) {
@@ -153,7 +165,7 @@ export class DonorComponent implements OnInit {
         },
       });
     } else {
-      this.donorService.addDonor(donor).subscribe({
+      this.donorService.add(donor).subscribe({
         next: (addedDonor) => {
           this.donors.push({
             ...addedDonor,

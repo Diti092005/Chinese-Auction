@@ -1,4 +1,3 @@
-
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TicketService } from '../../services/ticket.service';
@@ -71,9 +70,9 @@ export class PendingTicketsComponent {
     const confirmPay = confirm("Are you sure you want to pay for this ticket?");
     if (!confirmPay) return;
     console.log(ticketId);
-
     this.router.navigate(['/credit-payment'], {
-      queryParams: { ticketId }
+      state: { ticketIds: [ticketId] },
+      queryParams: { ticketIds: ticketId }
     });
   }
 
@@ -82,17 +81,11 @@ export class PendingTicketsComponent {
 
     const confirmPay = confirm("Are you sure you want to pay for the selected tickets?");
     if (!confirmPay) return;
-    // for (let index = 0; index < this.selectedIds.length; index++) {
-    //   this.ticketService.pay(this.selectedIds[index]);
-    //   console.log(this.selectedIds[index]);
+    console.log(this.selectedIds);
 
-    // }
-    let ticketIds:string=""
-     for (let index = 0; index < this.selectedIds.length; index++) {
-      ticketIds+=this.selectedIds[index]+",";
-    }
     this.router.navigate(['/credit-payment'], {
-      queryParams: { returnUrl: this.router.url,ticketIds }
+      state: { ticketIds: [...this.selectedIds] },
+      queryParams: { ticketIds: this.selectedIds.join(',') }
     });
 
   }

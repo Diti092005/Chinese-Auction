@@ -31,11 +31,17 @@ namespace Server.Dal
         public async Task Delete(int id)
         {
             _logger.LogInformation($"Deleting donor with id {id}");
-            var donor = await _context.Donors.FindAsync(id);
+            var donor = await _context.Donors.Include(d => d.Gifts).FirstOrDefaultAsync(d => d.Id == id);
             if (donor == null)
             {
                 _logger.LogWarning($"Donor with ID {id} not found");
                 throw new KeyNotFoundException($"Donor with ID {id} not found.");
+            }
+            if (donor.Gifts != null && donor.Gifts.Any())
+            {
+                _logger.LogWarning($"Cannot delete donor with ID {id} because he has gifts.");
+                // Custom exception for client-friendly message
+                throw new InvalidOperationException("Cannot delete donor because he has gifts. Please remove all gifts before deleting the donor.");
             }
             _context.Donors.Remove(donor);
             await _context.SaveChangesAsync();

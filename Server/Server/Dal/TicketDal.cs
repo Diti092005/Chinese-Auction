@@ -115,23 +115,28 @@ namespace Server.Dal
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task pay(int id)
+        public async Task pay(int [] ids)
         {
             var user = await _userDal.GetUserFromToken();
-            var ticket = await _dbContext.Tickets.FindAsync(id);
-            if (ticket == null)
+            for (int i = 0; i < ids.Length; i++)
             {
-                throw new KeyNotFoundException($"Ticket with ID {id} not found.");
+                var ticket = await _dbContext.Tickets.FindAsync(ids[i]);
+                Console.WriteLine("id"+ids[i]);
+                if (ticket == null)
+                {
+                    throw new KeyNotFoundException($"Ticket with ID {ids[i]} not found.");
+                }
+                if (ticket.UserId != user.Id)
+                {
+                    throw new UnauthorizedAccessException("You are not authorized to delete this ticket.");
+                }
+                if (ticket.Status != TicketStatus.Pending)
+                {
+                    throw new InvalidOperationException($"Ticket with ID {ids[i]} is not in a state that can be paid.");
+                }
+                ticket.Status = TicketStatus.Paid;
             }
-            if (ticket.UserId != user.Id)
-            {
-                throw new UnauthorizedAccessException("You are not authorized to delete this ticket.");
-            }
-            if (ticket.Status != TicketStatus.Pending)
-            {
-                throw new InvalidOperationException($"Ticket with ID {id} is not in a state that can be paid.");
-            }
-            ticket.Status = TicketStatus.Paid;
+            
             await _dbContext.SaveChangesAsync();
         }
 

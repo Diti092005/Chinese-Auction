@@ -32,24 +32,49 @@ namespace Server.Bll
             _logger.LogInformation($"Returned gift with id {id}");
             return result;
         }
-        public async Task Add(Gift gift)
+        public async Task Add(GiftDTO giftDto)
         {
-            _logger.LogInformation($"Adding new gift: {gift?.GiftName}");
+            if (giftDto == null || giftDto.CategoryId == 0 || giftDto.DonorId == 0 || string.IsNullOrEmpty(giftDto.GiftName))
+                throw new ArgumentNullException(nameof(giftDto), "Gift data cannot be null.");
+            if (giftDto.Price < 10 || giftDto.Price > 100)
+                throw new InvalidOperationException("Price must be between 10 and 100.");
+            var exists = await TitleExists(giftDto.GiftName);
+            if (exists)
+                throw new InvalidOperationException("Gift with this name already exists.");
+            var gift = new Gift
+            {
+                DonorId = giftDto.DonorId,
+                CategoryId = giftDto.CategoryId,
+                GiftName = giftDto.GiftName,
+                Price = giftDto.Price,
+                ImageUrl = giftDto.ImageUrl,
+                Details = giftDto.Details,
+                WinnerId = giftDto.WinnerId
+            };
             await _giftDal.Add(gift);
-            _logger.LogInformation("Gift added successfully");
         }
-        public async Task Update(int id, GiftDTO gift)
+
+        public async Task Update(int id, GiftDTO giftDto)
         {
-            _logger.LogInformation($"Updating gift with id {id}");
-            await _giftDal.Update(id, gift);
-            _logger.LogInformation($"Gift with id {id} updated successfully");
+            if (giftDto == null || giftDto.CategoryId == 0 || giftDto.DonorId == 0 || string.IsNullOrEmpty(giftDto.GiftName))
+                throw new ArgumentNullException(nameof(giftDto), "Gift data cannot be null.");
+            if (giftDto.Price < 10 || giftDto.Price > 100)
+                throw new InvalidOperationException("Price must be between 10 and 100.");
+            var existingGift = await _giftDal.Get(id);
+            if (existingGift == null)
+                throw new KeyNotFoundException($"Gift with ID {id} not found.");
+            var exists = await TitleExists(giftDto.GiftName);
+            if (exists && existingGift.GiftName != giftDto.GiftName)
+                throw new InvalidOperationException("Gift with this name already exists.");
+            await _giftDal.Update(id, giftDto);
         }
+
         public async Task<bool> Delete(int id)
         {
-            _logger.LogInformation($"Deleting gift with id {id}");
-            var result = await _giftDal.Delete(id);
-            _logger.LogInformation($"Gift with id {id} deleted: {result}");
-            return result;
+            var tickets = await _ticketDal.GetByGiftId(id);
+            if (tickets.Any())
+                throw new InvalidOperationException("Cannot delete gift because it has associated tickets.");
+            return await _giftDal.Delete(id);
         }
         public async Task<IEnumerable<Gift>> Search(string? giftName = null, string? donorName = null, int? buyerCount = null)
         {

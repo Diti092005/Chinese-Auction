@@ -29,23 +29,33 @@ namespace Server.Bll
             _logger.LogInformation($"Returned donor with id {id}");
             return result;
         }
-        public async Task Add(Donor donor)
+        public async Task Add(DonorDTO donorDto)
         {
-            _logger.LogInformation($"Adding new donor");
+            if (donorDto == null)
+                throw new ArgumentNullException(nameof(donorDto), "Donor data cannot be null.");
+            var donor = new Donor
+            {
+                Name = donorDto.Name,
+                Email = donorDto.Email,
+                ShowMe = donorDto.ShowMe
+            };
             await _donorDal.Add(donor);
-            _logger.LogInformation("Donor added successfully");
         }
         public async Task Update(int id, DonorDTO donorDto)
         {
-            _logger.LogInformation($"Updating donor with id {id}");
+            if (donorDto == null)
+                throw new ArgumentNullException(nameof(donorDto), "Donor data cannot be null.");
+            var existingDonor = await _donorDal.Get(id);
+            if (existingDonor == null)
+                throw new KeyNotFoundException($"Donor with ID {id} not found.");
             await _donorDal.Update(id, donorDto);
-            _logger.LogInformation($"Donor with id {id} updated successfully");
         }
         public async Task Delete(int id)
         {
-            _logger.LogInformation($"Deleting donor with id {id}");
+            var existingDonor = await _donorDal.Get(id);
+            if (existingDonor == null)
+                throw new KeyNotFoundException($"Donor with ID {id} not found.");
             await _donorDal.Delete(id);
-            _logger.LogInformation($"Donor with id {id} deleted successfully");
         }
         public async Task<IEnumerable<Donor>> Search(string? name = null, string? email = null, string? giftName = null)
         {

@@ -34,6 +34,7 @@ export class CreditPaymentComponent implements OnInit {
 
   paymentForm!: FormGroup;
   tickets: Ticket[] = [];
+  ticketIdsForPayment: number[] = [];
   totalPrice = 0;
   returnUrl = '/';
   isProcessing = false;
@@ -41,37 +42,53 @@ export class CreditPaymentComponent implements OnInit {
   focusedField: string | null = null;
 
 
-ngOnInit() {
-  this.paymentForm = this.fb.group({
-    cardNumber: ['', [Validators.required]],
-    cardHolder: ['', [Validators.required]],
-    expiry: ['', [Validators.required]],
-    cvv: ['', [Validators.required]]
-  });
-
-  const query = this.route.snapshot.queryParamMap;
-
-  const ticketId = query.get('ticketId');
-  const ticketIds = query.get('ticketIds');
-  this.returnUrl = query.get('returnUrl') ?? '/purchase';
-
-  if (ticketId) {
-    // תשלום עבור כרטיס בודד
-    this.ticketService.getById(+ticketId).subscribe(ticket => {
-      this.tickets = [ticket];
-      this.totalPrice = ticket.gift.price;
+  ngOnInit() {
+    this.paymentForm = this.fb.group({
+      cardNumber: ['', [Validators.required]],
+      cardHolder: ['', [Validators.required]],
+      expiry: ['', [Validators.required]],
+      cvv: ['', [Validators.required]]
     });
-  } else if (ticketIds) {
-    // תשלום עבור מספר כרטיסים
-    const ids = ticketIds.split(',').filter(id => id).map(id => +id);
-    const requests = ids.map(id => this.ticketService.getById(id));
 
-    forkJoin(requests).subscribe(results => {
-      this.tickets = results.filter((t): t is Ticket => !!t);
-      this.totalPrice = this.tickets.reduce((sum, t) => sum + t.gift.price, 0);
-    });
+    // Try to get ticketIds from state, then from query string
+    let ids: number[] = [];
+    const nav = this.router.getCurrentNavigation();
+    if (nav?.extras.state && Array.isArray(nav.extras.state['ticketIds'])) {
+      ids = [...nav.extras.state['ticketIds']];
+    }
+    // If not found in state, check query string
+    if (ids.length === 0) {
+      const query = this.route.snapshot.queryParamMap;
+      if (query.get('ticketIds')) {
+        ids = query.get('ticketIds')!.split(',').map(id => +id).filter(id => !isNaN(id));
+      } else if (query.get('ticketId')) {
+        const singleId = +query.get('ticketId')!;
+        if (!isNaN(singleId)) ids = [singleId];
+      }
+      this.returnUrl = query.get('returnUrl') ?? '/purchase';
+    } else {
+      // If found in state, also check for returnUrl in query string
+      const query = this.route.snapshot.queryParamMap;
+      this.returnUrl = query.get('returnUrl') ?? '/purchase';
+    }
+
+    console.log('CreditPaymentComponent - ticketIds:', ids);
+
+    if (ids.length > 0) {
+      const requests = ids.map(id => this.ticketService.getById(id));
+      forkJoin(requests).subscribe(results => {
+        this.tickets = results.filter((t): t is Ticket => !!t);
+        this.ticketIdsForPayment = this.tickets.map(t => t.id);
+        this.totalPrice = this.tickets.reduce((sum, t) => sum + t.gift.price, 0);
+      });
+    } else {
+      alert('No tickets selected for payment or the link is invalid.');
+      this.router.navigateByUrl('/purchase');
+      this.tickets = [];
+      this.ticketIdsForPayment = [];
+      this.totalPrice = 0;
+    }
   }
-}
 
 
   submit() {
@@ -82,22 +99,19 @@ ngOnInit() {
 
     this.isProcessing = true;
 
-    Promise.all(
-      this.tickets.map(ticket =>
-        this.ticketService.pay(ticket.id).toPromise()
-      )
-    ).then(() => {
-      this.successMessage = 'Payment completed successfully!';
-      this.paymentForm.reset();
-
-      setTimeout(() => {
-        this.router.navigateByUrl(this.returnUrl);
-      }, 2000);
-    }).catch(() => {
-      alert('Payment failed. Please try again.');
-    }).finally(() => {
-      this.isProcessing = false;
-    });
+    this.ticketService.pay(this.ticketIdsForPayment).toPromise()
+      .then(() => {
+        this.successMessage = 'Payment completed successfully!';
+        this.paymentForm.reset();
+        this.isProcessing = false;
+        setTimeout(() => {
+          this.router.navigateByUrl(this.returnUrl);
+        }, 2000);
+      })
+      .catch(() => {
+        alert('Payment failed. Please try again.');
+        this.isProcessing = false;
+      });
   }
 
   onFocus(field: string) {

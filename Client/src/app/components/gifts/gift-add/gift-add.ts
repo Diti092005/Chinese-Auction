@@ -64,7 +64,7 @@ export class GiftAddComponent implements OnInit {
       this.categoryOptions = this.categories.map(c => ({ label: c.name, value: c.id }));
     });
 
-    this.donorService.getAllDonors().subscribe((res: Donor[]) => {
+    this.donorService.getAll().subscribe((res: Donor[]) => {
       this.donors = res;
       this.donorOptions = this.donors.map(d => ({ label: d.name, value: d.id }));
     });

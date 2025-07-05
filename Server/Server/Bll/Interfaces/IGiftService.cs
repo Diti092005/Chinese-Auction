@@ -7,10 +7,10 @@ namespace Server.Bll.Interfaces
     {
         Task<IEnumerable<Gift>> Get();
         Task<Gift> Get(int id);
-        Task Add(Gift gift);
-        Task Update(int id, GiftDTO gift);
+        Task Add(GiftDTO giftDto);
+        Task Update(int id, GiftDTO giftDto);
         Task<bool> Delete(int id);
-        Task<IEnumerable<Gift>> Search(string giftName = null, string donorName = null, int? buyerCount = null);
+        Task<IEnumerable<Gift>> Search(string? giftName = null, string? donorName = null, int? buyerCount = null);
         Task<Donor> GetDonor(int giftId);
         public Task<bool> TitleExists(string title);
         public Task<IEnumerable<Gift>> SortByPrice();

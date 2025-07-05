@@ -42,13 +42,21 @@ export class GiftService {
     return this.http.post<Gift>(this.baseUrl, newGift, { headers });
   }
 
-  updateGift(id: number, gift: Partial<Gift>): Observable<any> {
+  updateGift(id: number, gift: Partial<Gift>): Observable<void> {
     const token = this.auth.getToken();
-    console.log('Using token:', token);
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
-    return this.http.put(`${this.baseUrl}/${id}`, gift, { headers });
+    // שלח רק את השדות הנדרשים לפי GiftDTO
+    const dto: any = {
+      giftName: gift.giftName,
+      categoryId: gift.categoryId,
+      donorId: gift.donorId,
+      price: gift.price,
+      details: gift.details,
+      imageUrl: gift.imageUrl
+    };
+    return this.http.put<void>(`${this.baseUrl}/${id}`, dto, { headers });
   }
 
   deleteGift(id: number): Observable<any> {

@@ -75,20 +75,14 @@ namespace Server.Controllers
             _logger.LogInformation("Adding a new donor");
             try
             {
-                if (donorDto == null )
-                {
-                    return BadRequest("Donor data cannot be null.");
-                }
-
-                var donor = _mapper.Map<Donor>(donorDto);
-                await _donorService.Add(donor);
-                _logger.LogInformation($"Successfully added donor with ID {donor.Id}");
-                return CreatedAtAction(nameof(Get), new { id = donor.Id }, donor);
+                await _donorService.Add(donorDto);
+                _logger.LogInformation($"Successfully added donor");
+                return Ok();
             }
             catch (ArgumentNullException ex)
             {
                 _logger.LogWarning(ex, "Donor data is null");
-                return BadRequest(ex.Message); 
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
@@ -104,18 +98,6 @@ namespace Server.Controllers
             _logger.LogInformation($"Updating donor with ID {id}");
             try
             {
-                if (donorDto == null )
-                {
-                    return BadRequest("Donor data cannot be null.");
-                }
-
-                var existingDonor = await _donorService.Get(id);
-                if (existingDonor == null)
-                {
-                    _logger.LogWarning($"Donor with ID {id} not found for update");
-                    return NotFound($"Donor with ID {id} not found.");
-                }
-
                 await _donorService.Update(id, donorDto);
                 _logger.LogInformation($"Successfully updated donor with ID {id}");
                 return NoContent();
@@ -123,12 +105,12 @@ namespace Server.Controllers
             catch (KeyNotFoundException ex)
             {
                 _logger.LogWarning(ex, $"Donor with ID {id} not found");
-                return NotFound(ex.Message); 
+                return NotFound(ex.Message);
             }
             catch (ArgumentNullException ex)
             {
                 _logger.LogWarning(ex, "Donor data is null");
-                return BadRequest(ex.Message); 
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
@@ -144,13 +126,6 @@ namespace Server.Controllers
             _logger.LogInformation($"Deleting donor with ID {id}");
             try
             {
-                var existingDonor = await _donorService.Get(id);
-                if (existingDonor == null)
-                {
-                    _logger.LogWarning($"Donor with ID {id} not found for deletion");
-                    return NotFound($"Donor with ID {id} not found.");
-                }
-
                 await _donorService.Delete(id);
                 _logger.LogInformation($"Successfully deleted donor with ID {id}");
                 return NoContent();
@@ -158,7 +133,12 @@ namespace Server.Controllers
             catch (KeyNotFoundException ex)
             {
                 _logger.LogWarning(ex, $"Donor with ID {id} not found");
-                return NotFound(ex.Message); 
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, ex.Message);
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {

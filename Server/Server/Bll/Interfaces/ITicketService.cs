@@ -12,7 +12,8 @@ namespace Server.Bll.Interfaces
 
         Task<Ticket> Get(int id);
         Task Add(Ticket ticket);
-        Task pay(int id);
+        Task Add(TicketDTO ticketDto, int userId);
+        Task pay(int [] ids);
         Task Delete(int id);
     }
 }

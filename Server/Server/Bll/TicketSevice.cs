@@ -59,18 +59,35 @@ namespace Server.Bll
             await _ticketDal.Add(ticket);
             _logger.LogInformation("Ticket added successfully");
         }
-        public async Task pay(int id)
+        public async Task pay(int[] ids)
         {
-            _logger.LogInformation($"Paying for ticket with id {id}");
-            await _ticketDal.pay(id);
-            _logger.LogInformation($"Ticket with id {id} paid successfully");
+            _logger.LogInformation($"Paying for tickets");
+            if (ids == null || ids.Length == 0)
+                throw new ArgumentNullException(nameof(ids), "No ticket IDs provided for payment.");
+            // אפשר להוסיף כאן בדיקות נוספות (למשל, האם כל הכרטיסים קיימים, האם הם שייכים למשתמש, וכו')
+            await _ticketDal.pay(ids);
+            _logger.LogInformation($"Tickets paid successfully");
         }
         public async Task Delete(int id)
         {
             _logger.LogInformation($"Deleting ticket with id {id}");
+            var ticket = await _ticketDal.Get(id);
+            if (ticket == null)
+                throw new KeyNotFoundException($"Ticket with ID {id} not found.");
             await _ticketDal.Delete(id);
             _logger.LogInformation($"Ticket with id {id} deleted successfully");
         }
-        
+        public async Task Add(TicketDTO ticketDto, int userId)
+        {
+            if (ticketDto == null)
+                throw new ArgumentNullException(nameof(ticketDto), "Ticket data cannot be null.");
+            var ticket = new Ticket
+            {
+                GiftId = ticketDto.GiftId,
+                UserId = userId,
+                OrderDate = DateTime.Now
+            };
+            await _ticketDal.Add(ticket);
+        }
     }
 }

@@ -46,9 +46,9 @@ export class TicketService {
   add(ticket: Partial<Ticket>): Observable<Ticket> {
     return this.http.post<Ticket>(this.baseUrl, ticket, { headers: this.getAuthHeaders() });
   }
-
-  pay(id: number): Observable<void> {
-    return this.http.put<void>(`${this.baseUrl}/pay/${id}`, {}, { headers: this.getAuthHeaders() });
+  pay(ids: number[]): Observable<void> {
+    console.log(ids)
+    return this.http.put<void>(`${this.baseUrl}/pay`, ids, { headers: this.getAuthHeaders() });
   }
 
   delete(id: number): Observable<void> {

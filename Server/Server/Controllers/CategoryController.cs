@@ -78,22 +78,14 @@ namespace server.Controllers
             _logger.LogInformation("Adding a new category");
             try
             {
-                var category = _mapper.Map<Category>(categoryDto);
-                var duplicate = await _categoryService.NameExist(category.Name);
-                if (duplicate)
-                {
-                    _logger.LogWarning($"Category with name {category.Name} already exists");
-                    return Conflict($"Category with name {category.Name} already exists.");
-                }
-
-                await _categoryService.Add(category);
-                _logger.LogInformation($"Category with ID {category.Id} created successfully");
-                return CreatedAtAction(nameof(Get), new { id = category.Id }, category);
+                var createdCategory = await _categoryService.Add(categoryDto);
+                _logger.LogInformation($"Category with ID {createdCategory.Id} created successfully");
+                return CreatedAtAction(nameof(Get), new { id = createdCategory.Id }, createdCategory);
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentException ex)
             {
-                _logger.LogError(ex, "Invalid category data provided");
-                return BadRequest(ex.Message); 
+                _logger.LogWarning(ex, "Invalid category data or duplicate name");
+                return Conflict(ex.Message);
             }
             catch (Exception ex)
             {
@@ -110,34 +102,19 @@ namespace server.Controllers
             _logger.LogInformation($"Updating category with ID {id}");
             try
             {
-                var category = _mapper.Map<Category>(categoryDto);
-                var existingCategory = await _categoryService.Get(id);
-                if (existingCategory == null)
-                {
-                    _logger.LogWarning($"Category with ID {id} not found for update");
-                    return NotFound($"Category with ID {id} not found.");
-                }
-
-                var duplicate = await _categoryService.NameExist(category.Name);
-                if (duplicate)
-                {
-                    _logger.LogWarning($"Category with name {category.Name} already exists");
-                    return Conflict($"Category with name {category.Name} already exists.");
-                }
-
-                await _categoryService.Update(id, category);
+                await _categoryService.Update(id, categoryDto);
                 _logger.LogInformation($"Category with ID {id} updated successfully");
                 return NoContent();
             }
             catch (KeyNotFoundException ex)
             {
                 _logger.LogWarning(ex, $"Category with ID {id} not found");
-                return NotFound(ex.Message); 
+                return NotFound(ex.Message);
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentException ex)
             {
-                _logger.LogError(ex, "Invalid category data provided for update");
-                return BadRequest(ex.Message); 
+                _logger.LogWarning(ex, "Invalid category data or duplicate name");
+                return Conflict(ex.Message);
             }
             catch (Exception ex)
             {
@@ -157,6 +134,11 @@ namespace server.Controllers
                 await _categoryService.Delete(id);
                 _logger.LogInformation($"Category with ID {id} deleted successfully");
                 return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, $"Cannot delete category {id} because there are gifts assigned to it");
+                return Conflict(ex.Message);
             }
             catch (KeyNotFoundException ex)
             {

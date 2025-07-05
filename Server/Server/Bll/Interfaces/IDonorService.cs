@@ -1,7 +1,6 @@
 ﻿using Server.Dal.Interfaces;
 using Server.Models.DTO;
 using Server.Models;
-using Server.Models;
 
 namespace Server.Bll.Interfaces
 {
@@ -9,9 +8,9 @@ namespace Server.Bll.Interfaces
     {
         public Task<IEnumerable<Donor>> Get();
         public Task<Donor> Get(int id);
-        public Task Add(Donor donor);
+        public Task Add(DonorDTO donorDto);
         public Task Update(int id, DonorDTO donorDto);
         public Task Delete(int id);
-        public Task<IEnumerable<Donor>> Search(string name = null, string email = null, string giftName = null);
+        public Task<IEnumerable<Donor>> Search(string? name = null, string? email = null, string? giftName = null);
     }
 }

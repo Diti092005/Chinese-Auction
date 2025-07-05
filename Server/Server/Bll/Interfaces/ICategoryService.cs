@@ -1,4 +1,5 @@
 ﻿using Server.Models;
+using Server.Models.DTO;
 
 namespace Server.Bll.Interfaces
 {
@@ -6,8 +7,8 @@ namespace Server.Bll.Interfaces
     {
         public Task<IEnumerable<Category>> Get();
         public Task<Category> Get(int id);
-        public Task Add(Category category);
-        public Task Update(int id, Category category);
+        public Task<CategoryDTO> Add(CategoryDTO categoryDto);
+        public Task Update(int id, CategoryDTO categoryDto);
         public Task Delete(int id);
         public Task<bool> NameExist(string name);
     }

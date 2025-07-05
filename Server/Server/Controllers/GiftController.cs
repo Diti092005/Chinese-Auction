@@ -76,35 +76,19 @@ namespace server.Controllers
             _logger.LogInformation("Adding a new gift");
             try
             {
-                if (giftDto == null || giftDto.CategoryId == 0 || giftDto.DonorId == 0 || giftDto.GiftName == null)
-                {
-                    return BadRequest("Gift data cannot be null.");
-                }
-                if (giftDto.Price < 10 || giftDto.Price > 100)
-                {
-                    return BadRequest("Price must be between 10 and 100.");
-                }
-               
-                var existingGift = await _giftService.TitleExists(giftDto.GiftName);
-                if (existingGift)
-                {
-                    return Conflict("Gift with this name already exists.");
-                }
-
-                var gift = _mapper.Map<Gift>(giftDto);
-                await _giftService.Add(gift);
-                _logger.LogInformation($"Successfully added gift with id {gift.Id}");
-                return CreatedAtAction(nameof(Get), new { id = gift.Id }, gift);
+                await _giftService.Add(giftDto);
+                _logger.LogInformation($"Successfully added gift");
+                return Ok();
             }
-            catch(InvalidDataException ex)
+            catch (ArgumentNullException ex)
             {
-                _logger.LogWarning(ex, "Invalid data for gift addition");
-                return BadRequest(ex.Message); 
+                _logger.LogWarning(ex, "Gift data is null");
+                return BadRequest(ex.Message);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogWarning(ex, "Conflict occurred while adding gift");
-                return Conflict(ex.Message); 
+                _logger.LogWarning(ex, ex.Message);
+                return Conflict(ex.Message);
             }
             catch (Exception ex)
             {
@@ -120,27 +104,6 @@ namespace server.Controllers
             _logger.LogInformation($"Updating gift with id {id}");
             try
             {
-                if (giftDto == null || giftDto.CategoryId == 0 || giftDto.DonorId == 0 || giftDto.GiftName == null )
-                {
-                    return BadRequest("Gift data cannot be null.");
-                }
-                if(giftDto.Price < 10 || giftDto.Price>100)
-                {
-                    return BadRequest("Price must be between 10 and 100.");
-                }
-
-                var existingGift = await _giftService.Get(id);
-                if (existingGift == null)
-                {
-                    return NotFound($"Gift with ID {id} not found.");
-                }
-
-                var existingGiftWithSameName = await _giftService.TitleExists(giftDto.GiftName);
-                if (existingGiftWithSameName && existingGift.GiftName != giftDto.GiftName)
-                {
-                    return Conflict("Gift with this name already exists.");
-                }
-
                 await _giftService.Update(id, giftDto);
                 _logger.LogInformation($"Successfully updated gift with id {id}");
                 return NoContent();
@@ -148,12 +111,17 @@ namespace server.Controllers
             catch (KeyNotFoundException ex)
             {
                 _logger.LogWarning(ex, $"Gift with id {id} not found for update");
-                return NotFound(ex.Message); 
+                return NotFound(ex.Message);
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogWarning(ex, "Gift data is null");
+                return BadRequest(ex.Message);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogWarning(ex, "Conflict occurred while updating gift");
-                return Conflict(ex.Message); 
+                _logger.LogWarning(ex, ex.Message);
+                return Conflict(ex.Message);
             }
             catch (Exception ex)
             {
@@ -169,25 +137,24 @@ namespace server.Controllers
             _logger.LogInformation($"Deleting gift with id {id}");
             try
             {
-                var hasTickets = await _ticketService.GetByGiftId(id);
-                if (hasTickets.Any())
-                {
-                    // מחזיר תשובה מובנית ולא זורק חריגה
-                    return BadRequest("Cannot delete gift because it has associated tickets.");
-                }
-
-                var deleted = await _giftService.Delete(id);
-                if (!deleted)
-                    return NotFound($"Gift with ID {id} not found.");
-
+                await _giftService.Delete(id);
                 _logger.LogInformation($"Successfully deleted gift with id {id}");
                 return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, $"Gift with id {id} not found");
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, ex.Message);
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error occurred while deleting gift with id {id}");
-                // טיפול כללי בשגיאות
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, "server error");
             }
         }
 
@@ -290,17 +257,17 @@ namespace server.Controllers
             catch (KeyNotFoundException ex)
             {
                 _logger.LogWarning(ex, $"Gift with id {id} not found for raffle");
-                return NotFound(ex.Message); 
+                return NotFound(ex.Message);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.LogWarning(ex, "Invalid operation for the raffle");
-                return BadRequest(ex.Message); 
+                _logger.LogWarning(ex, ex.Message);
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error occurred while conducting raffle for gift with id {id}");
-                return StatusCode(500, "server error"); 
+                return StatusCode(500, "server error");
             }
         }
 

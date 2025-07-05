@@ -1,7 +1,7 @@
 ﻿using Server.Bll.Interfaces;
-using Server.Bll.Interfaces;
 using Server.Dal.Interfaces;
 using Server.Models;
+using Server.Models.DTO;
 using Microsoft.Extensions.Logging;
 
 namespace Server.Bll.Services
@@ -16,11 +16,16 @@ namespace Server.Bll.Services
             _logger = logger;
         }
 
-        public async Task Add(Category category)
+        public async Task<CategoryDTO> Add(CategoryDTO categoryDto)
         {
-            _logger.LogInformation($"Adding new category: {category?.Name}");
+            if (categoryDto == null || string.IsNullOrWhiteSpace(categoryDto.Name))
+                throw new ArgumentNullException(nameof(categoryDto), "Category data cannot be null.");
+            var duplicate = await NameExist(categoryDto.Name);
+            if (duplicate)
+                throw new InvalidOperationException($"Category with name {categoryDto.Name} already exists.");
+            var category = new Category { Name = categoryDto.Name };
             await _categoryDal.Add(category);
-            _logger.LogInformation("Category added successfully");
+            return new CategoryDTO { Id = category.Id, Name = category.Name };
         }
 
         public async Task Delete(int id)
@@ -54,11 +59,18 @@ namespace Server.Bll.Services
             return result;
         }
 
-        public async Task Update(int id, Category category)
+        public async Task Update(int id, CategoryDTO categoryDto)
         {
-            _logger.LogInformation($"Updating category with id {id}");
+            if (categoryDto == null || string.IsNullOrWhiteSpace(categoryDto.Name))
+                throw new ArgumentNullException(nameof(categoryDto), "Category data cannot be null.");
+            var existingCategory = await _categoryDal.Get(id);
+            if (existingCategory == null)
+                throw new KeyNotFoundException($"Category with ID {id} not found.");
+            var duplicate = await NameExist(categoryDto.Name);
+            if (duplicate)
+                throw new InvalidOperationException($"Category with name {categoryDto.Name} already exists.");
+            var category = new Category { Id = id, Name = categoryDto.Name };
             await _categoryDal.Update(id, category);
-            _logger.LogInformation($"Category with id {id} updated successfully");
         }
     }
 }

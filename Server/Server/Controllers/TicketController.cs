@@ -171,13 +171,10 @@ namespace server.Controllers
             _logger.LogInformation("Adding a new ticket");
             try
             {
-                var ticket = _mapper.Map<Ticket>(ticketDto);
                 var user = await _userDal.GetUserFromToken();
-                ticket.UserId = user.Id;
-                ticket.OrderDate = DateTime.Now;
-                await _ticketService.Add(ticket);
-                _logger.LogInformation($"Successfully added a new ticket with ID {ticket.Id}");
-                return CreatedAtAction(nameof(Get), new { id = ticket.Id }, ticket);
+                await _ticketService.Add(ticketDto, user.Id);
+                _logger.LogInformation($"Successfully added a new ticket");
+                return Ok();
             }
             catch (ArgumentNullException ex)
             {
@@ -201,20 +198,20 @@ namespace server.Controllers
             }
         }
 
-        [HttpPut("pay/{id}")]
+        [HttpPut("pay")]
         [Authorize]
-        public async Task<IActionResult> Pay(int id)
+        public async Task<IActionResult> Pay(int[] ids)
         {
-            _logger.LogInformation($"Processing payment for ticket ID {id}");
+            _logger.LogInformation($"Processing payment for tickets");
             try
             {
-                await _ticketService.pay(id);
-                _logger.LogInformation($"Successfully processed payment for ticket ID {id}");
+                await _ticketService.pay(ids);
+                _logger.LogInformation($"Successfully processed payment for tickets");
                 return NoContent();
             }
             catch (KeyNotFoundException ex)
             {
-                _logger.LogWarning(ex, $"Ticket with ID {id} not found for payment");
+                _logger.LogWarning(ex, $"Tickets not found for payment");
                 return NotFound(new { message = ex.Message });
             }
             catch (UnauthorizedAccessException ex)
@@ -222,14 +219,19 @@ namespace server.Controllers
                 _logger.LogWarning(ex, "Unauthorized access attempt for payment");
                 return Unauthorized(new { message = ex.Message });
             }
+            catch (ArgumentNullException ex)
+            {
+                _logger.LogWarning(ex, ex.Message);
+                return BadRequest(new { message = ex.Message });
+            }
             catch (InvalidOperationException ex)
             {
-                _logger.LogWarning(ex, $"Invalid operation for payment of ticket ID {id}");
+                _logger.LogWarning(ex, $"Invalid operation for payment of tickets");
                 return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error occurred while processing payment for ticket ID {id}");
+                _logger.LogError(ex, $"Error occurred while processing payment for tickets");
                 return StatusCode(500, new { message = "An unexpected error occurred." });
             }
         }

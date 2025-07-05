@@ -26,6 +26,7 @@ export class GiftListComponent implements OnInit {
   private ticketService = inject(TicketService);
   private auth = inject(Auth);
   private categoryService = inject(CategoryService);
+  private messageService = inject(MessageService);
 
   gifts: Gift[] = [];
   sortedGifts: Gift[] = [];
@@ -35,12 +36,11 @@ export class GiftListComponent implements OnInit {
   secondarySortField: 'price' | 'category' = 'category';
   secondarySortDirection: 'asc' | 'desc' = 'asc';
   selectedQuantities: { [giftId: number]: number } = {};
-  orderedTickets: Ticket[] = [];
+  // orderedTickets: Ticket[] = [];
   isSubmitting: boolean = false;
 
   ngOnInit() {
     this.loadCategoriesAndGifts();
-    this.loadPendingTickets();
   }
 
   loadCategoriesAndGifts() {
@@ -117,11 +117,11 @@ export class GiftListComponent implements OnInit {
     this.sortGifts();
   }
 
-  loadPendingTickets() {
-    this.ticketService.getPending().subscribe(tickets => {
-      this.orderedTickets = tickets;
-    });
-  }
+  // loadPendingTickets() {
+  //   this.ticketService.getPending().subscribe(tickets => {
+  //     this.orderedTickets = tickets;
+  //   });
+  // }
 
   orderTickets(gift: Gift) {
     const quantity = this.selectedQuantities[gift.id] || 0;
@@ -150,16 +150,20 @@ export class GiftListComponent implements OnInit {
 
     Promise.all(requests)
       .then(() => {
-        this.loadPendingTickets(); // טען את כל הכרטיסים שוב
         this.selectedQuantities[gift.id] = 0;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Tickets ordered successfully!'
+        });
       })
       .catch(() => alert('Failed to order some tickets.'))
       .finally(() => this.isSubmitting = false);
   }
 
-  removeTicket(ticketId: number) {
-    this.ticketService.delete(ticketId).subscribe(() => {
-      this.orderedTickets = this.orderedTickets.filter(t => t.id !== ticketId);
-    });
-  }
+  // removeTicket(ticketId: number) {
+  //   this.ticketService.delete(ticketId).subscribe(() => {
+  //     this.orderedTickets = this.orderedTickets.filter(t => t.id !== ticketId);
+  //   });
+  // }
 }
